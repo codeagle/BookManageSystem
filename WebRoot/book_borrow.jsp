@@ -64,8 +64,8 @@
             <td valign="top" bgcolor="#F8BF73">        
         <%
         	
-        	ArrayList allBorrowReader=(ArrayList)session.getAttribute("allBorrowReader");
-        		if(allBorrowReader.isEmpty()){
+        	ArrayList allReader=(ArrayList)session.getAttribute("allReader");
+        		if(allReader.isEmpty()){
          %>
          <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
 		
@@ -112,7 +112,7 @@
                    
 					<input name="inputkey" type="text" id="inputkey" size="50">
                    <input name="Submit2" type="button" class="btn_grey" value="确定" onClick="checkbook(form1)">
-                   <input name="operator" type="hidden" id="operator" value="<%%>">
+             
   <input name="Button" type="button" class="btn_grey" value="完成借阅" onClick="window.location.href='book_borrow.jsp'">
                    </td>
                </tr> 
@@ -129,8 +129,9 @@
                     </td></tr></table></td></tr></table></td></tr></form></table></td></tr></table></td></tr></table>
                     <%}else{%>
                         <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
-			<% ArrayList allReader =(ArrayList)session.getAttribute("allBorrowReader");
-				ReaderInfo readerinfo=(ReaderInfo)allReader.get(0);
+			<% ArrayList allReader1 =(ArrayList)session.getAttribute("allReader");
+				ReaderInfo readerinfo = (ReaderInfo)allReader1.get(0);
+				
 				%>
                   <tr>
                     <td><table width="90%" height="21" border="0" cellpadding="0" cellspacing="0">
@@ -173,10 +174,9 @@
                    图书编号 &nbsp;&nbsp;
                    
 					<input name="inputkey" type="text" id="inputkey" size="50">
-					<%int countnum =(int)session.getAttribute("countnum"); %> 
-					<input name="countnum" type="hidden" value="<%=countnum%>">
-					<%System.out.println("规定的数量"+readerinfo.getNumber()); %>
-					<%System.out.println("已借阅的数量"+session.getAttribute("countnum") ); %>
+					<%//int countnum =(int)session.getAttribute("countnum"); %> 
+					<%//为ＪＳ提供判断条件，是否借阅到达上限 %>
+					<input name="countnum" type="hidden" value="<%=readerinfo.getBorrownumber() %>">			
                    <input name="Button2"  type="button"  class="btn_grey"   value="确定"   onClick="checkbook(form1)">
                    <input name="operator" type="hidden" id="operator" value="<%%>">
   <input name="Button" type="button" class="btn_grey" value="完成借阅" onClick="window.location.href='book_borrow.jsp'">

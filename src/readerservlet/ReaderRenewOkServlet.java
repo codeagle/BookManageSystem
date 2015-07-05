@@ -55,7 +55,8 @@ public class ReaderRenewOkServlet extends HttpServlet {
 		response.setContentType("text/html;charset=gb18030");
 		request.setCharacterEncoding("gb18030");
 		BorrowInfo borrow= new BorrowInfo();
-		borrow.setBookid(Integer.parseInt(request.getParameter("borrowid")));
+		borrow.setId(Integer.parseInt(request.getParameter("borrowid")));
+		borrow.setBookid(Integer.parseInt(request.getParameter("bookid")));
 		int readerid =Integer.parseInt(request.getParameter("barcode"));
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置借阅日期格式为系统默认时间
 		String borrowdate=df.format(new Date());

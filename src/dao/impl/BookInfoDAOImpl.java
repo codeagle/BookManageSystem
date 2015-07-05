@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import vo.*;
-import vo.BookType;
 import dao.BookInfoDAO;
 import dao.dbc.DBConnection;
 
@@ -120,7 +119,7 @@ public class BookInfoDAOImpl implements BookInfoDAO {
 			}
 			pstmt = conn.prepareStatement(sql2);
 			rs = pstmt.executeQuery();
-			while(rs.next()){
+			while (rs.next()) {
 				pl = new Publishing();
 				pl.setPubid(rs.getInt("pubid"));
 			}
@@ -237,5 +236,75 @@ public class BookInfoDAOImpl implements BookInfoDAO {
 
 		return bookinfo;
 	}
+
+	/**
+	 * 分权限后，读者部分的图书信息查询，采用模糊查询方式
+	 */
+	@Override
+	public ArrayList findBookInfoByIndistinct(BookInfo bookinfo, String bookname)
+			throws Exception {
+		ArrayList allBookInfo = new ArrayList();
+		try {
+			String sql = "select bookid,bookname,author,price,isbn, nownumber,total,btypename,pubname,cname "
+					+ "from bookinfo bi,caseinfo ci,publishing pub,booktype bt "
+					+ "where bi.pubid=pub.pubid and bi.btypeid=bt.btypeid and bi.caseid=ci.caseid and bookname like '%"+ bookname + "%'";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				bookinfo = new BookInfo();
+				bookinfo.setBookid(rs.getInt("bookid"));
+				bookinfo.setBookname(rs.getString("bookname"));
+				bookinfo.setAuthor(rs.getString("author"));
+				bookinfo.setCname(rs.getString("cname"));
+				bookinfo.setIsbn(rs.getString("isbn"));
+				bookinfo.setPrice(rs.getDouble("price"));
+				bookinfo.setPubname(rs.getString("pubname"));
+				bookinfo.setBtypename(rs.getString("btypename"));
+				bookinfo.setNownumber(rs.getInt("nownumber"));
+				bookinfo.setTotal(rs.getInt("total"));
+				allBookInfo.add(bookinfo);
+			}
+			rs.close();
+			pstmt.close();
+			dbc.closed();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return allBookInfo;
+	}
+
+	@Override
+	public ArrayList borrowRankingList(BookInfo bookinfo) throws Exception {
+		ArrayList allRankingList= new ArrayList();
+		try {
+			String sql="select bi.bookid,bi.bookname,bt.btypename,nownumber,ci.cname,pl.pubname,bi.author,price,count(bw.bookid) as times "
+					+ "from borrowinfo bw,bookinfo bi,booktype bt,publishing pl,caseinfo ci  "
+					+ "where bi.bookid=bw.bookid and bt.btypeid=bi.btypeid"
+					+ " and ci.caseid=bi.caseid and pl.pubid=bi.pubid group by bi.bookid,nownumber,bi.bookname,bt.btypename,ci.cname,pl.pubname,bi.author,price "
+					+ "order by times desc";
+			pstmt=conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				bookinfo = new BookInfo();
+				bookinfo.setBookid(rs.getInt("bookid"));
+				bookinfo.setBookname(rs.getString("bookname"));
+				bookinfo.setBtypename(rs.getString("btypename"));
+				bookinfo.setNownumber(rs.getInt("nownumber"));
+				bookinfo.setCname(rs.getString("cname"));
+				bookinfo.setPubname(rs.getString("pubname"));
+				bookinfo.setPrice(rs.getDouble("price"));
+				bookinfo.setAuthor(rs.getString("author"));
+				bookinfo.setTimes(rs.getInt("times"));
+				allRankingList.add(bookinfo);
+			}
+			rs.close();
+			pstmt.close();
+			dbc.closed();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return allRankingList;
+	}
+
 
 }

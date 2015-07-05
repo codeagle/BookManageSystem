@@ -39,8 +39,7 @@ public class ReaderBorrowServlet extends HttpServlet {
 		request.setCharacterEncoding("gb18030");
 		ReaderInfo readerInfo = new ReaderInfo();
 		BorrowInfo borrow = new BorrowInfo();
-		
-			int readerid = Integer.parseInt((String)request.getSession().getAttribute("userid"));
+			int readerid = (Integer)request.getSession().getAttribute("userid");
 			try {
 				ArrayList allReader = DAOFactory.getReaderInfoDAOInstance()
 						.findReaderInfoById(readerid);

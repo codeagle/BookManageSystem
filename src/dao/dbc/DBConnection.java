@@ -7,7 +7,9 @@ public class DBConnection {
 	private static final String url = "jdbc:mysql://localhost:3306/BookManageSystem";
 	private static  final String userName = "root";
     private static  final String password = "root";
-    */
+    private  Connection conn = null;
+    boolean flag = false;
+    //*/
 	/*SQLServer连接字符串*/
 
     
@@ -15,13 +17,14 @@ public class DBConnection {
      * @功能 创建数据库连接 
      * @返回值 connection型值 
      */
+//	/*
 	private static final String driver="com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private static final String url = "jdbc:sqlserver://localhost:1433; DatabaseName=bookmanagesystem";
     private static  final String userName = "sa";
     private static  final String password = "123456";
     private  Connection conn = null;
     boolean flag = false;
-    
+    //*/
     /** 
      * @功能 创建数据库连接 
      * @返回值 connection型值 

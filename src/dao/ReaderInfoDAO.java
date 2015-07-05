@@ -15,6 +15,6 @@ public interface ReaderInfoDAO {
 		//删除读者类型
 		public boolean doDelete(int readerid)throws Exception;
 		//根据指定readerid查询读者类型
-		public ReaderInfo findReaderInfoById(int readerid)throws Exception;
+		public ArrayList findReaderInfoById(int readerid)throws Exception;
 		
 }

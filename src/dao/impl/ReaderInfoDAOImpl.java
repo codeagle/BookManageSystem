@@ -64,7 +64,15 @@ public class ReaderInfoDAOImpl implements ReaderInfoDAO {
 			pstmt.setString(4, readerinfo.getIdcard());
 			pstmt.setInt(5, readerinfo.getBorrownumber());
 			int count=pstmt.executeUpdate();
-			if(count>0){
+			pstmt.close();
+			String sql2="insert into users values(?,?,?,?)";
+			pstmt=conn.prepareStatement(sql2);
+			pstmt.setInt(1, readerinfo.getReaderid());
+			pstmt.setString(2, readerinfo.getReadername());
+			pstmt.setInt(3, readerinfo.getReaderid());
+			pstmt.setInt(4,2);
+			int count1=pstmt.executeUpdate();
+			if(count>0&&count1>0){
 				flag=true;
 			}
 			pstmt.close();
@@ -108,12 +116,15 @@ public class ReaderInfoDAOImpl implements ReaderInfoDAO {
 	public boolean doDelete(int readerid) throws Exception {
 		try {
 			conn=dbc.getConnection();
-			String sql="delete from readerinfo where readerid=? ";
-			
+			String sql="delete from readerinfo where readerid=? ";	
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1, readerid);
 			int count=pstmt.executeUpdate();
-			if(count>0){
+			String sql1="delete from users where userid=? ";	
+			pstmt=conn.prepareStatement(sql1);
+			pstmt.setInt(1, readerid);
+			int count1=pstmt.executeUpdate();
+			if(count>0&&count1>0){
 				flag=true;
 			}
 			pstmt.close();
@@ -126,23 +137,28 @@ public class ReaderInfoDAOImpl implements ReaderInfoDAO {
 	}
 
 	@Override
-	public ReaderInfo findReaderInfoById(int readerid) throws Exception {
-		
-		ReaderInfo readerinfo= new ReaderInfo();
+	public ArrayList findReaderInfoById(int readerid) throws Exception {
+		ArrayList allReader = new ArrayList();
 		try {
-			
+			String sql2="update readerinfo set borrownumber=(select count(*) from borrowinfo where readerid=? and returndate is null) where readerid=? ";
+			pstmt=conn.prepareStatement(sql2);
+			pstmt.setInt(1, readerid);
+			pstmt.setInt(2, readerid);
+			pstmt.executeUpdate();
 			String sql="select readerid ,readername,rtypename ,idcard,number,borrownumber from readerinfo ri,readertype rt "
 					+ "where ri.rtypeid=rt.rtypeid and readerid=?";
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1, readerid);
 			rs=pstmt.executeQuery();
-			if(rs.next()){			
+			if(rs.next()){	
+				ReaderInfo readerinfo= new ReaderInfo();
 				readerinfo.setReaderid(rs.getInt("readerid"));
 				readerinfo.setReadername(rs.getString("readername"));
 				readerinfo.setRtypename(rs.getString("rtypename"));
 				readerinfo.setIdcard(rs.getString("idcard"));
 				readerinfo.setNumber(rs.getInt("number"));
-				readerinfo.setBorrownumber(rs.getInt("borrownumber"));		
+				readerinfo.setBorrownumber(rs.getInt("borrownumber"));	
+				allReader.add(readerinfo);
 			}
 			rs.close();
 			pstmt.close();
@@ -152,7 +168,7 @@ public class ReaderInfoDAOImpl implements ReaderInfoDAO {
 			dbc.closed();
 		}
 		
-		return readerinfo;
+		return allReader;
 	}
 
 

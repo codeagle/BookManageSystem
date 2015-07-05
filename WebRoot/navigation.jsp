@@ -36,12 +36,10 @@
 		
         <td width="66%" align="right" bgcolor="#B0690B" class="word_white">
         <a href="main.jsp" class="word_white">首页</a>| 
-     
         <a  onmouseover=showmenu(event,readermenu) onmouseout=delayhidemenu() style="CURSOR:hand"  class="word_white">读者管理</a> | 
         <a  onmouseover=showmenu(event,bookmenu) onmouseout=delayhidemenu() class="word_white" style="CURSOR:hand" >图书管理</a> |
         <a  onmouseover=showmenu(event,borrowmenu) onmouseout=delayhidemenu() class="word_white" style="CURSOR:hand">图书借还</a> | 
         <a  onmouseover=showmenu(event,querymenu) onmouseout=delayhidemenu()  class="word_white" style="CURSOR:hand" >系统查询</a> | 
-   
         <a href="#" onClick="quit()" class="word_white">退出系统</a></td>
         
         <td width="2%" bgcolor="#B0690B">&nbsp;</td>

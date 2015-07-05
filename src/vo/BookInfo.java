@@ -14,7 +14,14 @@ public class BookInfo {
 	private String btypename;
 	private String pubname;
 	private String cname;
+	private int times;//½èÔÄ´ÎÊı
 	
+	public int getTimes() {
+		return times;
+	}
+	public void setTimes(int times) {
+		this.times = times;
+	}
 	public String getBtypename() {
 		return btypename;
 	}

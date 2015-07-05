@@ -36,6 +36,7 @@ public class BookInfoAddServlet extends HttpServlet {
 		response.setContentType("text/html;charset=gb18030");
 		request.setCharacterEncoding("gb18030");
 		BookInfo bookinfo = new BookInfo();
+		bookinfo.setBookid(Integer.parseInt(request.getParameter("bookid")));
 		bookinfo.setBookname(request.getParameter("bookname"));
 		bookinfo.setBtypename(request.getParameter("typename"));
 		bookinfo.setAuthor(request.getParameter("author"));

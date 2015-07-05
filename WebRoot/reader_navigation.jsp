@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" pageEncoding="GB18030"%>
+<%@ page language="java" import="java.util.*,vo.*" pageEncoding="GB18030"%>
 
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -20,10 +20,11 @@
 					window.location.href="logout.jsp";
 				}
 			}
+			
 		</script>
   </head>
   
-  <body>
+  <body >
   <script src="JS/onclock.JS"></script>
 <script src="JS/menu.JS"></script>
 <div class=menuskin id=popmenu
@@ -35,10 +36,12 @@
         <td width="29%"><div id="bgclock" class="word_white"></div></td>
 		
         <td width="66%" align="right" bgcolor="#B0690B" class="word_white">
-        <a href="main.jsp" class="word_white">首页</a>| 
-            <a href="reader_bqueryall.jsp" class="word_white">图书查询</a>| 
-              <a href="reader_borrow.jsp" class="word_white">借阅图书</a>| 
-                <a href="reader_bookRenew.jsp" class="word_white">续借图书</a>| 
+     
+        <a href="main.jsp"  class="word_white">首页</a>|
+        <a href=" readerBookQuery.jsp" class="word_white">我的借阅</a>
+        <a href="updatepwd.jsp" class="word_white">修改密码</a>
+            <a href="BookInfoQueryServlet" class="word_white">图书查询</a>| 
+                <a href="ReaderRenewServlet" class="word_white">续借图书</a>| 
         <a href="#" onClick="quit()" class="word_white">退出系统</a></td>
         
         <td width="2%" bgcolor="#B0690B">&nbsp;</td>

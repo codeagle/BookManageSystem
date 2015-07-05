@@ -19,13 +19,15 @@ public class UserDAOImpl implements UserDAO {
 	public boolean findLogin(User user) throws Exception {	
 		try {
 			conn=db.getConnection();
-			String sql = "SELECT uname FROM Users WHERE uname=? AND upwd=?" ;
+			String sql = "SELECT uname,limit FROM Users WHERE userid=? AND upwd=?" ;
 			pstmt = conn.prepareStatement(sql) ;
-			pstmt.setString(1, user.getName()) ;
+			pstmt.setInt(1, user.getUserid()) ;
 			pstmt.setString(2, user.getPwd()) ;
 			rs = pstmt.executeQuery() ;
 			if(rs.next()){
 				flag = true ;
+				user.setLimit(rs.getInt("limit"));
+				user.setName(rs.getString("uname"));
 				//²âÊÔ
 //				System.out.print(user.getUserid());
 //			    System.out.print(user.getName());
@@ -40,4 +42,22 @@ public class UserDAOImpl implements UserDAO {
 		return flag;
 	}
 
+	@Override
+	public boolean updatePwd(User user) throws Exception {
+		try {
+			conn=db.getConnection();
+			String sql="update users set upwd=? where userid=?";
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1, user.getPwd());
+			pstmt.setInt(2, user.getUserid());
+			int count=pstmt.executeUpdate();
+			if(count>0){
+				flag=true;	
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	
 }

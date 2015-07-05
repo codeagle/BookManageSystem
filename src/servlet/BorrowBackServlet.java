@@ -57,7 +57,6 @@ public class BorrowBackServlet extends HttpServlet {
 			}
 		}else{
 			int readerid = Integer.parseInt(request.getParameter("barcode"));
-			System.out.println();
 			ArrayList allBorrowBook = new ArrayList();
 			try {
 				ArrayList allReaderinfo = DAOFactory.getReaderInfoDAOInstance()
@@ -68,7 +67,7 @@ public class BorrowBackServlet extends HttpServlet {
 					 allBorrowBook = DAOFactory.getBorrowBookDAOInstance()
 							.findAllBorrowBookWithStudent(borrow, readerid);
 					}
-					if(readerinfo.getRtypename().equals("教师")){
+				if(readerinfo.getRtypename().equals("教师")){
 						 allBorrowBook = DAOFactory.getBorrowBookDAOInstance()
 								.findAllBorrowBookWithTeacher(borrow, readerid);
 					}

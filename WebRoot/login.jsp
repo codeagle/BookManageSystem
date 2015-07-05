@@ -56,7 +56,7 @@
                            <td width="50%" height="37">&nbsp;</td>
                            <td width="10%">管理员帐号：</td>
                            <td width="31%">
-                           <input name="userid" type="text"  value="admin"   class="logininput" id="userid" size="27"/></td>
+                           <input name="userid" type="text"  value="1"   class="logininput" id="userid" size="27"/></td>
                            <td width="9%">&nbsp;</td>
                         </tr>
                         <tr>

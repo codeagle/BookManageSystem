@@ -11,192 +11,268 @@ import dao.BorrowBookDAO;
 import dao.dbc.DBConnection;
 
 public class BorrowBookDAOImpl implements BorrowBookDAO {
-	private PreparedStatement pstmt=null;
-	private ResultSet rs =null;
-	boolean flag=false;
+	private PreparedStatement pstmt = null;
+	private ResultSet rs = null;
+	boolean flag = false;
 	DBConnection dbc = new DBConnection();
-	private Connection conn=dbc.getConnection();
-	
-	//借阅图书
+	private Connection conn = dbc.getConnection();
+
+	// 借阅图书
 	public boolean insertBorrowBook(BorrowInfo borrow) throws Exception {
 		try {
-			String sql="insert into borrowinfo(bookid,readerid,borrowdate,returndate)  values(?,?,?,?)";
-			pstmt=conn.prepareStatement(sql);
+			//判断图书表中是否存在该图书，存在则执行借阅插入，不存在不执行
+			Integer bookid = 0;
+			String sql_check = "select * from bookinfo where bookid=?";
+			pstmt = conn.prepareStatement(sql_check);
 			pstmt.setInt(1, borrow.getBookid());
-			pstmt.setInt(2, borrow.getReaderid() );
-			pstmt.setString(3, borrow.getBorrowdate());
-			pstmt.setString(4, borrow.getReturndate());			
-			int count = pstmt.executeUpdate();
-			String sql1="update bookinfo set nownumber=nownumber-1 where bookid=? ";
-			pstmt=conn.prepareStatement(sql1);
-			pstmt.setInt(1, borrow.getBookid());
-			int count1=pstmt.executeUpdate();
-			if(count >0&&count1>0){
-				flag=true;
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				bookid = rs.getInt("bookid");
+			}
+			if (bookid != 0) {
+				String sql = "insert into borrowinfo(bookid,readerid,borrowdate,returndate)  values(?,?,?,?)";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, borrow.getBookid());
+				pstmt.setInt(2, borrow.getReaderid());
+				pstmt.setString(3, borrow.getBorrowdate());
+				pstmt.setString(4, borrow.getReturndate());
+				int count = pstmt.executeUpdate();
+				// 书籍现库存-1
+				String sql1 = "update bookinfo set nownumber=nownumber-1 where bookid=? ";
+				pstmt = conn.prepareStatement(sql1);
+				pstmt.setInt(1, borrow.getBookid());
+				int count1 = pstmt.executeUpdate();
+				// 读者借阅数+1
+				String sql2 = "update readerinfo set borrownumber=(select count(*) from borrowinfo where readerid=?  and returndate is null) where readerid=?";
+				pstmt = conn.prepareStatement(sql2);
+				pstmt.setInt(1, borrow.getReaderid());
+				pstmt.setInt(2, borrow.getReaderid());
+				int count2 = pstmt.executeUpdate();
+				if (count > 0 && count1 > 0 && count2 > 0) {
+					flag = true;
+				}
+				pstmt.close();
+				dbc.closed();
+			}else{
+				System.out.println("没有该图书，不可借阅");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		return flag;
 	}
-	//查询被借阅且未归还的图书
+
+	// 查询被借阅且未归还的图书
 	@Override
-	public ArrayList findAllBorrowBookWithTeacher(BorrowInfo borrow,int readerno) throws Exception {
+	public ArrayList findAllBorrowBookWithTeacher(BorrowInfo borrow,
+			int readerno) throws Exception {
 		ArrayList allBorrowBook = new ArrayList();
 		try {
-			String sql="select bri.bookid,readerid,CONVERT(varchar(20) , borrowdate, 111) as borrowdate,"
+			String sql = "select id,bri.bookid,readerid,CONVERT(varchar(20) , borrowdate, 111) as borrowdate,"
 					+ " CONVERT(varchar(20) , returndate, 111 ) as returndate, nownumber,total,"
-					+ "CONVERT(varchar(20) , borrowdate+60 ,111 ) as orderdate,bookname,"
-					+ "renew,fine from borrowinfo bri,bookinfo bki where bri.bookid=bki.bookid "
+					+ "CONVERT(varchar(20) , borrowdate+60 ,111 ) as orderdate,bookname, datediff(dd, borrowdate+60,getdate()) as overdate,"
+					+ "renew,datediff(day, borrowdate+60,getdate()) *0.1 as fine from borrowinfo bri,bookinfo bki where bri.bookid=bki.bookid "
 					+ "and readerid=? and returndate is null";
-			pstmt=conn.prepareStatement(sql);
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, readerno);
-			rs=pstmt.executeQuery();
-			while(rs.next()){
-				 borrow =new BorrowInfo();
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				borrow = new BorrowInfo();
+				borrow.setId(rs.getInt("id"));
 				borrow.setBookid(rs.getInt("bookid"));
 				borrow.setBookname(rs.getString("bookname"));
 				borrow.setBorrowdate(rs.getString("borrowdate"));
 				borrow.setOrderdate(rs.getString("orderdate"));
+				borrow.setFine(rs.getDouble("fine"));
+				borrow.setOverdate(rs.getInt("overdate"));
 				borrow.setNownumber(rs.getInt("nownumber"));
 				borrow.setTotal(rs.getInt("total"));
 				allBorrowBook.add(borrow);
-				
+
 			}
+			rs.close();
+			pstmt.close();
+			dbc.closed();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return allBorrowBook;
-	}
-	//通过ISBN查找图书
-	@Override
-	public BookInfo findBookByISBN(String isbn) throws Exception {
-		BookInfo bookinfo = new BookInfo();
-		try {
-			String sql ="select * from bookinfo where isbn=?";
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setString(1, isbn);
-			rs=pstmt.executeQuery();
-			while(rs.next()){
-				bookinfo = new BookInfo();
-				bookinfo.setBookname(rs.getString("bookname"));
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return bookinfo;
-	}
-	//归还图书
-	@Override
-	public boolean backBookById(int borrowid,String backdate) throws Exception {
-		try {
-			String sql="update  Borrow set backdate=? where borrowid=? ";
-			
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setString(1, backdate);
-			pstmt.setInt(2, borrowid);
-			int count=pstmt.executeUpdate();
-			if(count>0){
-				flag=true;
-			}
-			pstmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			dbc.closed();
-		}
-		return flag;
-	}
-	//
-	/**
-	 * 续借按钮功能，实现续借功能,
-	 * 实现每本书在合理时间内只允许续借一次
-	 * 续借后，续借状态设为“否”
-	 */
-	@Override
-	public boolean renewBookById(BorrowInfo borrow) throws Exception {
-		try {
-			String sql="update borrow set borrowdate=?,renew='否' where bookid=? and renew='是' ";		
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setString(1, borrow.getBorrowdate());
-			pstmt.setInt(2, borrow.getBookid());
-			int count=pstmt.executeUpdate();
-			if(count>0){
-				flag=true;
-			}
-			pstmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			dbc.closed();
-		}
-		return flag;
-		
 	}
 
-	/**
-	 * 查询是否可以续借的图书。
-	 * 满足条件： 
-	 * 		①续借状态为“是”
-	 * 		②未归还
-	 *  	③借阅时期在30内（即没有超期）
-	 */		
-	@Override
-	public ArrayList findBorrowBookNoYes(BorrowInfo borrow, int readerno)
-			throws Exception {
-		ArrayList allBorrowBook = new ArrayList();
-		try {
-			String sql="select bi.bookname,bi.casename,borrowid,b.isbn,b.readerNo,b.readername,CONVERT(varchar(12) , borrowdate, 111) as borrowdate , CONVERT(varchar(12) , backdate, 111 ) as backdate,renew, CONVERT(varchar(12) , borrowdate+30 , 111 ) as orderdate "
-					+ "from bookinfo bi,borrow b,readerinfo r where r.readerno=b.readerNo and backdate is  null"
-					+ " and bi.isbn=b.isbn and renew='是' and b.readerNo=? and  DATEDIFF(dd,borrowdate,GETDATE())<=30";
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setInt(1, readerno);
-			rs=pstmt.executeQuery();
-			while(rs.next()){
-				 borrow =new BorrowInfo();
-				 borrow.setBookid(rs.getInt("borrowid"));
-				borrow.setBorrowdate(rs.getString("borrowdate"));
-				borrow.setOrderdate(rs.getString("orderdate"));
-	//			borrow.setIsbn(rs.getString("isbn"));
-		//		borrow.setCasename(rs.getString("casename"));
-				allBorrowBook.add(borrow);
-				
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return allBorrowBook;
-	}
 	@Override
 	public ArrayList findAllBorrowBookWithStudent(BorrowInfo borrow,
 			int readerno) throws Exception {
 		ArrayList allBorrowBook = new ArrayList();
 		try {
-			String sql="select borrowinfo.bookid,readerid,CONVERT(varchar(12) , borrowdate, 111) as borrowdate ,"
-					+ " CONVERT(varchar(12) , returndate, 111 ) as returndate, nownumber,total"
-					+ "CONVERT(varchar(12) , borrowdate+30 , 111 ) as orderdate,bookname"
-					+ "renew,fine from borrowinfo bri,bookinfo bki"
-					+ "where bri.bookid=bki.bookid and readerid=? and returndate is null";
-			pstmt=conn.prepareStatement(sql);
+			String sql = "select id, bri.bookid,readerid,CONVERT(varchar(20) , borrowdate, 111) as borrowdate,"
+					+ " CONVERT(varchar(20) , returndate, 111 ) as returndate, nownumber,total,"
+					+ "CONVERT(varchar(20) , borrowdate+30 ,111 ) as orderdate,bookname,datediff(d, borrowdate+30,getdate()) as overdate,"
+					+ "renew,datediff(day, borrowdate+30,getdate()) *0.1 as fine from borrowinfo bri,bookinfo bki where bri.bookid=bki.bookid "
+					+ "and readerid=? and returndate is null";
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, readerno);
-			rs=pstmt.executeQuery();
-			while(rs.next()){
-				 borrow =new BorrowInfo();
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				borrow = new BorrowInfo();
+				borrow.setId(rs.getInt("id"));
 				borrow.setBookid(rs.getInt("bookid"));
 				borrow.setBookname(rs.getString("bookname"));
 				borrow.setBorrowdate(rs.getString("borrowdate"));
 				borrow.setOrderdate(rs.getString("orderdate"));
+				borrow.setFine(rs.getDouble("fine"));
+				borrow.setOverdate(rs.getInt("overdate"));
 				borrow.setNownumber(rs.getInt("nownumber"));
 				borrow.setTotal(rs.getInt("total"));
 				allBorrowBook.add(borrow);
-				
+
 			}
+			rs.close();
+			pstmt.close();
+			dbc.closed();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return allBorrowBook;
 	}
+
+	// 归还图书
+	@Override
+	public boolean borrowBackById(BorrowInfo borrow, int readerno)
+			throws Exception {
+		try {
+			String sql = "update borrowinfo set returndate=? where bookid=? and readerid=? and id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, borrow.getReturndate());
+			pstmt.setInt(2, borrow.getBookid());
+			pstmt.setInt(3, readerno);
+			pstmt.setInt(4, borrow.getId()); 
+			int count = pstmt.executeUpdate();
+			pstmt.close();
+			// 书籍现库存+1
+			String sql1 = "update bookinfo set nownumber=nownumber+1 where bookid=? ";
+			pstmt = conn.prepareStatement(sql1);
+			pstmt.setInt(1, borrow.getBookid());
+			int count1 = pstmt.executeUpdate();
+			pstmt.close();
+			// 统计读者借阅数
+			String sql2 = "update readerinfo set borrownumber=(select count(*) from borrowinfo where readerid=?  and returndate is null) where readerid=?";
+			pstmt = conn.prepareStatement(sql2);
+			pstmt.setInt(1, borrow.getReaderid());
+			pstmt.setInt(2, borrow.getReaderid());
+			int count2 = pstmt.executeUpdate();
+			if (count > 0 && count1 > 0 && count2 >=0) {
+				flag = true;
+			}
+			pstmt.close();
+			dbc.closed();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	//续借：只允许续借一次
+	@Override
+	public boolean renewBookById(BorrowInfo borrow, int readerno) throws Exception {
+		try {
+			String sql = "update borrowinfo set borrowdate=? ,renew=?  where bookid=? and readerid=? and id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, borrow.getReturndate());
+			pstmt.setString(2,"否");
+			pstmt.setInt(3, borrow.getBookid());
+			pstmt.setInt(4, readerno);
+			pstmt.setInt(5, borrow.getId()); 
+			int count = pstmt.executeUpdate();
+			if (count > 0 ) {
+				flag = true;
+			}
+			pstmt.close();
+			dbc.closed();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
 	
+	/*
+	 * 查询续借：
+	 * 条件：1，借阅未归还 2，距离到期时间还有10天之内可以续借
+	 * */
+	@Override
+	public ArrayList findBookRenewWithTeacher(BorrowInfo borrow, int readerno)
+			throws Exception {
+		ArrayList allBorrowBook = new ArrayList();
+		try {
+			String sql = "select id,bri.bookid,readerid,CONVERT(varchar(20) , borrowdate, 111) as borrowdate,"
+					+ " CONVERT(varchar(20) , returndate, 111 ) as returndate, nownumber,total,"
+					+ "CONVERT(varchar(20) , borrowdate+60 ,111 ) as orderdate,bookname, datediff(dd, borrowdate+60,getdate()) as overdate,"
+					+ "renew,datediff(day, borrowdate+60,getdate()) *0.1 as fine from borrowinfo bri,bookinfo bki where bri.bookid=bki.bookid "
+					+ "and readerid=? and returndate is null and renew=? and datediff(day,borrowdate+60,getdate()) between -10 and 0 ";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, readerno);
+			pstmt.setString(2, "是");
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				borrow = new BorrowInfo();
+				borrow.setId(rs.getInt("id"));
+				borrow.setBookid(rs.getInt("bookid"));
+				borrow.setBookname(rs.getString("bookname"));
+				borrow.setBorrowdate(rs.getString("borrowdate"));
+				borrow.setOrderdate(rs.getString("orderdate"));
+				borrow.setNownumber(rs.getInt("nownumber"));
+				borrow.setFine(rs.getDouble("fine"));
+				borrow.setOverdate(rs.getInt("overdate"));
+				borrow.setTotal(rs.getInt("total"));
+				allBorrowBook.add(borrow);
+			}
+			rs.close();
+			pstmt.close();
+			dbc.closed();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return allBorrowBook;
+	}
+
+	@Override
+	public ArrayList findBookRenewWithStudent(BorrowInfo borrow, int readerno)
+			throws Exception {
+		ArrayList allBorrowBook = new ArrayList();
+		try {
+			String sql = "select id,bri.bookid,readerid,CONVERT(varchar(20) , borrowdate, 111) as borrowdate,"
+					+ " CONVERT(varchar(20) , returndate, 111 ) as returndate, nownumber,total,"
+					+ "CONVERT(varchar(20) , borrowdate+30 ,111 ) as orderdate,bookname,datediff(day, borrowdate+30,getdate()) as overdate,"
+					+ "renew ,datediff(day, borrowdate+60,getdate()) *0.1 as fine from borrowinfo bri,bookinfo bki where bri.bookid=bki.bookid "
+					+ "and readerid=? and returndate is null and renew=? and  datediff(day,borrowdate+30,getdate()) between -10 and 0 ";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, readerno);
+			pstmt.setString(2, "是");
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				borrow = new BorrowInfo();
+				borrow.setId(rs.getInt("id"));
+				borrow.setBookid(rs.getInt("bookid"));
+				borrow.setBookname(rs.getString("bookname"));
+				borrow.setBorrowdate(rs.getString("borrowdate"));
+				borrow.setOrderdate(rs.getString("orderdate"));
+				borrow.setNownumber(rs.getInt("nownumber"));
+				borrow.setFine(rs.getDouble("fine"));
+				borrow.setOverdate(rs.getInt("overdate"));
+				borrow.setTotal(rs.getInt("total"));
+				allBorrowBook.add(borrow);
+			}
+			rs.close();
+			pstmt.close();
+			dbc.closed();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return allBorrowBook;
+	}
+
+	
+	
+
 }

@@ -11,8 +11,25 @@ public class BorrowInfo {
 	private double fine;
 	private int nownumber;
 	private int total;
+	private int overdate;
+	private int id;
 	
 	
+	
+
+
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getOverdate() {
+		return overdate;
+	}
+	public void setOverdate(int overdate) {
+		this.overdate = overdate;
+	}
 	public int getTotal() {
 		return total;
 	}

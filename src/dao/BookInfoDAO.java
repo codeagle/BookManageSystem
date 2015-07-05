@@ -16,4 +16,8 @@ public interface BookInfoDAO {
 	//根据指定bookid查询图书档案
 	public BookInfo findBookInfoById(int bookid)throws Exception;
 	public BookInfo findBookInfoByISBN(String isbn)throws Exception;
+	//模糊查询图书信息
+	public ArrayList findBookInfoByIndistinct(BookInfo bookinfo,String bookname)throws Exception;
+	//借阅排行榜
+	public ArrayList borrowRankingList(BookInfo bookinfo)throws Exception;
 }

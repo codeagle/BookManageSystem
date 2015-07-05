@@ -183,8 +183,8 @@ var bookmenu='<table width=90><tr><td id=bookType onMouseOver=overbg(bookType) o
 <tr><td id=book onMouseOver=overbg(book) onMouseOut=outbg(book)><a href=BookInfoQueryAllServlet>图书档案管理</a></td></tr>\
 </table>'
 var borrowmenu='<table width=60><tr><td id=Borrow onMouseOver=overbg(Borrow) onMouseOut=outbg(Borrow)><a href="BorrowServlet">图书借阅</a></td></tr>\
-<tr><td id=renew onMouseOver=overbg(renew) onMouseOut=outbg(renew)><a href=BookRenewServlet>图书续借</a></td></tr>\
-<tr><td id=giveback onMouseOver=overbg(giveback) onMouseOut=outbg(giveback)><a href=BookBackShowServlet>图书归还</a></td></tr>\
+<tr><td id=renew onMouseOver=overbg(renew) onMouseOut=outbg(renew)><a href=BorrowRenewServlet>图书续借</a></td></tr>\
+<tr><td id=giveback onMouseOver=overbg(giveback) onMouseOut=outbg(giveback)><a href=BorrowBackServlet>图书归还</a></td></tr>\
 </table>'
 var querymenu='<table width=90><tr><td id=bookQuery onMouseOver=overbg(bookQuery) onMouseOut=outbg(bookQuery)><a href=>图书档案查询</a></td></tr>\
 <tr><td id=borrowQuery onMouseOver=overbg(borrowQuery) onMouseOut=outbg(borrowQuery)><a href=>图书借阅查询</a></td></tr>\

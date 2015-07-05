@@ -212,11 +212,12 @@
     <servlet-name>BorrowServlet</servlet-name>
     <servlet-class>servlet.BorrowServlet</servlet-class>
   </servlet>
+
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
-    <servlet-name>BookBackShowServlet</servlet-name>
-    <servlet-class>servlet.BookBackShowServlet</servlet-class>
+    <servlet-name>BorrowBackServlet</servlet-name>
+    <servlet-class>servlet.BorrowBackServlet</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
@@ -233,9 +234,70 @@
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
-    <servlet-name>BookRenewOkServlet</servlet-name>
-    <servlet-class>servlet.BookRenewOkServlet</servlet-class>
+    <servlet-name>BorrowRenewServlet</servlet-name>
+    <servlet-class>servlet.BorrowRenewServlet</servlet-class>
   </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>BorrowRenewOkServlet</servlet-name>
+    <servlet-class>servlet.BorrowRenewOkServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ReaderQueryServlet</servlet-name>
+    <servlet-class>readerservlet.ReaderQueryServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>BookInfoQueryServlet</servlet-name>
+    <servlet-class>readerservlet.BookInfoQueryServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ReaderBorrowServlet</servlet-name>
+    <servlet-class>readerservlet.ReaderBorrowServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ReaderRenewServlet</servlet-name>
+    <servlet-class>readerservlet.ReaderRenewServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ReaderRenewOkServlet</servlet-name>
+    <servlet-class>readerservlet.ReaderRenewOkServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>UpdatePwdServlet</servlet-name>
+    <servlet-class>readerservlet.UpdatePwdServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>RankingListServlet</servlet-name>
+    <servlet-class>servlet.RankingListServlet</servlet-class>
+  </servlet>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -412,8 +474,8 @@
     <url-pattern>/BorrowServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>BookBackShowServlet</servlet-name>
-    <url-pattern>/BookBackShowServlet</url-pattern>
+    <servlet-name>BorrowBackServlet</servlet-name>
+    <url-pattern>/BorrowBackServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>BorrowBackOkServlet</servlet-name>
@@ -424,7 +486,39 @@
     <url-pattern>/BookRenewServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>BookRenewOkServlet</servlet-name>
-    <url-pattern>/BookRenewOkServlet</url-pattern>
+    <servlet-name>BorrowRenewServlet</servlet-name>
+    <url-pattern>/BorrowRenewServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>BorrowRenewOkServlet</servlet-name>
+    <url-pattern>/BorrowRenewOkServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReaderQueryServlet</servlet-name>
+    <url-pattern>/ReaderQueryServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>BookInfoQueryServlet</servlet-name>
+    <url-pattern>/BookInfoQueryServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReaderBorrowServlet</servlet-name>
+    <url-pattern>/ReaderBorrowServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReaderRenewServlet</servlet-name>
+    <url-pattern>/ReaderRenewServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReaderRenewOkServlet</servlet-name>
+    <url-pattern>/ReaderRenewOkServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UpdatePwdServlet</servlet-name>
+    <url-pattern>/UpdatePwdServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RankingListServlet</servlet-name>
+    <url-pattern>/RankingListServlet</url-pattern>
   </servlet-mapping>
 </web-app>

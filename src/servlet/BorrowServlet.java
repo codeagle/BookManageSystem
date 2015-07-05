@@ -25,7 +25,6 @@ public class BorrowServlet extends HttpServlet {
 		// Put your code here
 	}
 
-
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		this.doPost(request, response);
@@ -34,60 +33,75 @@ public class BorrowServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-
 		response.setContentType("text/html;charset=gb18030");
 		request.setCharacterEncoding("gb18030");
-		ReaderInfo readerInfo=new ReaderInfo();
-		if(request.getParameter("readerNo")==null||request.getParameter("readerNo").isEmpty()){	
-			try {		
-				//readerInfo.setReaderid(Integer.parseInt(request.getParameter("readerNo")));
-				ArrayList allBorrowReader = (ArrayList)DAOFactory.getBorrowReaderDAOInstance().findAllBorrowReader(readerInfo);
-				request.getSession().setAttribute("allBorrowReader", allBorrowReader);
-				request.getRequestDispatcher("book_borrow.jsp").forward(request, response);
-			
+		ReaderInfo readerInfo = new ReaderInfo();
+		BorrowInfo borrow = new BorrowInfo();
+		if (request.getParameter("readerNo") == null
+				|| request.getParameter("readerNo").isEmpty()) {
+			int readerid = 0;
+			try {
+				ArrayList allReader = DAOFactory.getReaderInfoDAOInstance()
+						.findReaderInfoById(readerid);
+				request.getSession().setAttribute("allReader", allReader);
+				request.getRequestDispatcher("book_borrow.jsp").forward(
+						request, response);
+
 			} catch (Exception e) {
-				
+
 				e.printStackTrace();
 			}
-			System.out.println("null中的方法");
-		}else{	
-			int readerid =Integer.parseInt(request.getParameter("readerNo"));
-			readerInfo.setReaderid(readerid);
-			System.out.println(readerid);
-		try {
-			BorrowInfo borrow= new BorrowInfo();
-			int  countnum=DAOFactory.getBorrowReaderDAOInstance().countBorrowNumber(readerid).getBorrownumber();
-			request.getSession().setAttribute("countnum", countnum);
-		ArrayList allBorrowReader=(ArrayList)DAOFactory.getBorrowReaderDAOInstance().findAllBorrowReader(readerInfo);
-		ArrayList allBorrowBook=new ArrayList();
-		if(request.getParameter("rtypename").equals("教师")){
-		 allBorrowBook =(ArrayList)DAOFactory.getBorrowBookDAOInstance().findAllBorrowBookWithTeacher(borrow, readerid);
-		}if(request.getParameter("rtypename").equals("学生")){
-		 allBorrowBook =(ArrayList)DAOFactory.getBorrowBookDAOInstance().findAllBorrowBookWithStudent(borrow, readerid);	
+		} else {
+			int readerid = Integer.parseInt(request.getParameter("readerNo"));
+			try {
+				ArrayList allReader = DAOFactory.getReaderInfoDAOInstance()
+						.findReaderInfoById(readerid);
+				request.getSession().setAttribute("allReader", allReader);
+				readerInfo=(ReaderInfo)allReader.get(0);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if(!request.getParameter("inputkey").isEmpty()){
+				borrow.setBookid(Integer.parseInt(request.getParameter("inputkey")));
+				borrow.setReaderid(readerid);
+				SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
+				borrow.setBorrowdate(format.format(new Date()));
+				try {
+					if(DAOFactory.getBorrowBookDAOInstance().insertBorrowBook(borrow)){
+						try {
+							ArrayList allReader = DAOFactory.getReaderInfoDAOInstance()
+									.findReaderInfoById(readerid);
+							request.getSession().setAttribute("allReader", allReader);
+							readerInfo=(ReaderInfo)allReader.get(0);
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				ArrayList allBorrowBook = new ArrayList();
+				if(readerInfo.getRtypename().equals("学生")){
+				 allBorrowBook = DAOFactory.getBorrowBookDAOInstance()
+						.findAllBorrowBookWithStudent(borrow, readerid);
+				}
+				if(readerInfo.getRtypename().equals("教师")){
+					 allBorrowBook = DAOFactory.getBorrowBookDAOInstance()
+							.findAllBorrowBookWithTeacher(borrow, readerid);
+				}
+				request.getSession().setAttribute("allBorrowBook", allBorrowBook);
+				request.getRequestDispatcher("book_borrow.jsp").forward(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
-		request.getSession().setAttribute("allBorrowReader", allBorrowReader);
-		request.getSession().setAttribute("allBorrowBook", allBorrowBook);
-		if(!request.getParameter("inputkey").trim().isEmpty()){
-			BookInfo bookinfo=DAOFactory.getBorrowBookDAOInstance().findBookByISBN(request.getParameter("inputkey"));
-			borrow.setReaderid(readerid);
-			borrow.setBookname(bookinfo.getBookname());
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置借阅日期格式为系统默认时间
-			borrow.setBorrowdate(df.format(new Date()));
-			DAOFactory.getBorrowBookDAOInstance().insertBorrowBook(borrow);
-			countnum=DAOFactory.getBorrowReaderDAOInstance().countBorrowNumber(readerid).getBorrownumber();
-			request.getSession().setAttribute("countnum", countnum);
-			allBorrowBook =(ArrayList)DAOFactory.getBorrowBookDAOInstance().findAllBorrowBookWithTeacher(borrow, readerid);
-			request.getSession().setAttribute("allBorrowBook", allBorrowBook);
-			request.getRequestDispatcher("book_borrow.jsp").forward(request, response);
-			return;
-			
-		}
-		request.getRequestDispatcher("book_borrow.jsp").forward(request, response);
-		return;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	}
 
 	public void init() throws ServletException {

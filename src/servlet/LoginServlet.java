@@ -22,13 +22,16 @@ public class LoginServlet extends HttpServlet {
 		request.setCharacterEncoding("gb18030");
 		
 		User user = new User();
-		user.setName(request.getParameter("userid"));
+		user.setUserid(Integer.parseInt(request.getParameter("userid")));
+		
 		user.setPwd(request.getParameter("pwd"));
+
 		try {
 			if(DAOFactory.getUserDAOInstance().findLogin(user)){
-			request.getSession().setAttribute("name", user.getName());
-				
-				request.getRequestDispatcher("main.jsp").forward(request, response);
+			request.getSession().setAttribute("loginname", user.getName());
+			request.getSession().setAttribute("limit", user.getLimit());
+			request.getSession().setAttribute("userid", user.getUserid());
+				request.getRequestDispatcher("RankingListServlet").forward(request, response);
 			} 
 			else {
 				request.getRequestDispatcher("login.jsp").forward(request, response);

@@ -38,7 +38,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     </table>
       <table width="93%" height="79"  border="0" cellpadding="0" cellspacing="0">
         <tr>
-          <td height="69" align="right" valign="bottom">当前登录用户：<%=session.getAttribute("name")%></td>
+          <td height="69" align="right" valign="bottom">当前登录用户：<%=session.getAttribute("loginname")%></td>
         </tr>
     </table></td>
   </tr>

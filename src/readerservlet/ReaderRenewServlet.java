@@ -52,7 +52,7 @@ public class ReaderRenewServlet extends HttpServlet {
 		request.setCharacterEncoding("gb18030");
 		ReaderInfo readerinfo = new ReaderInfo();
 		BorrowInfo borrow = new BorrowInfo();
-		int readerid = Integer.parseInt((String)request.getSession().getAttribute("userid"));
+		int readerid = (Integer)request.getSession().getAttribute("userid");
 		ArrayList allBorrowBook = new ArrayList();
 		try {
 			ArrayList allReaderinfo = DAOFactory.getReaderInfoDAOInstance()

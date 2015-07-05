@@ -43,7 +43,7 @@
 	if(allReaderinfo.isEmpty()){
 %>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
-				<form name="form1" method="post" action="BookRenewServlet">
+				<form name="form1" method="post" action="BorrowRenewServlet">
 				
                   <tr>
                     <td><table width="90%" height="21" border="0" cellpadding="0" cellspacing="0">
@@ -88,8 +88,7 @@
                   <td width="24%" height="25" bgcolor="#FFF9D9">图书名称</td>
                   <td width="12%" bgcolor="#FFF9D9">借阅时间</td>
                   <td width="13%" bgcolor="#FFF9D9">应还时间</td>
-                  <td width="14%" bgcolor="#FFF9D9">ISBN</td>
-                  <td width="12%" bgcolor="#FFF9D9">书架</td>
+                    <td width="13%" bgcolor="#FFF9D9">超期天数</td>
                   <td width="12%" bgcolor="#FFF9D9"><input name="Button22" type="button" class="btn_grey" value="完成续借" onClick="window.location.href='bookRenew.jsp'"></td>
                 </tr>
 <%}else{
@@ -97,14 +96,14 @@
  %>
 
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
-				<form name="form1" method="post" action="BookRenewServlet">
+				<form name="form1" method="post" action="BorrowRenewServlet">
 				
                   <tr>
                     <td><table width="90%" height="21" border="0" cellpadding="0" cellspacing="0">
                         <tr>
                           <td width="24%" height="18" style="padding-left:7px;padding-top:7px;"><img src="Images/reader_checkbg.jpg" width="142" height="18"></td>
                           <td width="76%" style="padding-top:7px;">读者编号：
-                            <input name="barcode" type="text" id="barcode" value="<%=readerinfo.getReaderno() %>" size="24">
+                            <input name="barcode" type="text" id="barcode" value="<%=readerinfo.getReaderid() %>" size="24">
                             &nbsp;
                             <input name="Button" type="button" class="btn_grey" value="确定" onClick="checkreader(form1)"></td>
                         </tr>
@@ -142,8 +141,8 @@
                   <td width="24%" height="25" bgcolor="#FFF9D9">图书名称</td>
                   <td width="12%" bgcolor="#FFF9D9">借阅时间</td>
                   <td width="13%" bgcolor="#FFF9D9">应还时间</td>
-                  <td width="14%" bgcolor="#FFF9D9">ISBN</td>
-                  <td width="12%" bgcolor="#FFF9D9">书架</td>
+                  <td width="13%" bgcolor="#FFF9D9">超期天数</td>
+
                 
                   <td width="12%" bgcolor="#FFF9D9"><input name="Button22" type="button" class="btn_grey" value="完成续借" onClick="window.location.href='bookRenew.jsp'"></td>
                 </tr>
@@ -153,12 +152,18 @@
                                 	BorrowInfo borrow=(BorrowInfo)allBorrowBook.get(i);
                 %>
                 <tr>
+                <input name="borrowid" type="hidden" value="<%=borrow.getId()%>">
                   <td height="25" style="padding:5px;">&nbsp;<%=borrow.getBookname()%></td>
                   <td style="padding:5px;">&nbsp;<%=borrow.getBorrowdate() %></td>  
                   <td style="padding:5px;">&nbsp;<%=borrow.getOrderdate() %></td>
-                  <td align="center">&nbsp;<%=borrow.getIsbn() %></td>
-                  <td align="center">&nbsp;<%=borrow.getCasename() %></td>
-                     <td width="12%" align="center"><a href="BookRenewOkServlet?borrowid=<%=borrow.getBorrowid()%>&barcode=<%=readerinfo.getReaderno()  %>">续借</a>&nbsp;</td>
+                  <% if(borrow.getOverdate()>0){%>
+                  <td style="padding:5px;" >&nbsp;<font color="red">已超期<%=borrow.getOverdate() %>天</font></td>
+                  <%}else{
+                  	int overdate=Math.abs(borrow.getOverdate());
+                  %>
+                   <td style="padding:5px;" >&nbsp;<%=overdate %>天后超期</td>
+                  <% }%>
+                     <td width="12%" align="center"><a href="BorrowRenewOkServlet?bookid=<%=borrow.getBookid()%>&barcode=<%=readerinfo.getReaderid()  %>&borrowid=<%=borrow.getId() %>">续借</a>&nbsp;</td>
                    </tr>
                <%
 }}

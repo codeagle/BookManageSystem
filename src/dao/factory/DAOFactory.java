@@ -3,7 +3,6 @@ package dao.factory;
 import dao.BookInfoDAO;
 import dao.BookTypeDAO;
 import dao.BorrowBookDAO;
-import dao.BorrowReaderDAO;
 import dao.CaseInfoDAO;
 import dao.PublishingDAO;
 import dao.ReaderInfoDAO;
@@ -12,7 +11,6 @@ import dao.UserDAO;
 import dao.impl.BookInfoDAOImpl;
 import dao.impl.BookTypeDAOImpl;
 import dao.impl.BorrowBookDAOImpl;
-import dao.impl.BorrowReaderDAOImpl;
 import dao.impl.CaseInfoDAOImpl;
 import dao.impl.PublishingDAOImpl;
 import dao.impl.ReaderInfoDAOImpl;
@@ -41,10 +39,7 @@ public class DAOFactory {
     public static ReaderInfoDAO getReaderInfoDAOInstance(){
     	return new ReaderInfoDAOImpl();
     }
-   
-    public static BorrowReaderDAO getBorrowReaderDAOInstance(){
-    	return new BorrowReaderDAOImpl();
-    }
+
     public static BorrowBookDAO getBorrowBookDAOInstance(){
     	return new  BorrowBookDAOImpl();
     }

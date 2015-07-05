@@ -20,7 +20,7 @@
 </head>
 <body onLoad="clockon(bgclock)">
 <%@include file="banner.jsp"%>
-<%@include file="navigation.jsp"%>
+<%@include file="reader_navigation.jsp"%>
 <table width="778"  border="0" cellspacing="0" cellpadding="0" align="center">
   <tr>
     <td valign="top" bgcolor="#FFFFFF"><table width="100%" height="509"  border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" class="tableBorder_gray">
@@ -37,104 +37,13 @@
           <tr>
             <td valign="top" bgcolor="#F8BF73">
             <%
-	ArrayList allReaderinfo=(ArrayList)session.getAttribute("allReaderinfo");
-	
-	//ReaderInfo readerinfo =(ReaderInfo)allReaderinfo.get(0);
-	if(allReaderinfo.isEmpty()){
-%>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
-				<form name="form1" method="post" action="BorrowRenewServlet">
-				
-                  <tr>
-                    <td><table width="90%" height="21" border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td width="24%" height="18" style="padding-left:7px;padding-top:7px;"><img src="Images/reader_checkbg.jpg" width="142" height="18"></td>
-                          <td width="76%" style="padding-top:7px;">读者编号：
-                            <input name="barcode" type="text" id="barcode" value="" size="24">
-                            &nbsp;
-                            <input name="Button" type="button" class="btn_grey" value="确定" onClick="checkreader(form1)"></td>
-                        </tr>
-                    </table></td>
-                  </tr>
-                  <tr>
-                    <td height="13" align="left" style="padding-left:7px;"><hr width="90%" size="1"></td>
-                    </tr>
-                  <tr>
-                    <td align="center"><table width="96%" border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td height="27">姓&nbsp;&nbsp;&nbsp;&nbsp;名：
-                            <input name="readername" type="text" id="readername" value=""></td>
-                          
-                          <td>读者类型：
-                            <input name="readerType" type="text" id="readerType" value=""></td>
-                        </tr>
-                        <tr>
-        
-                          <td>证件号码：
-                            <input name="paperNo" type="text" id="paperNo" value=""></td>
-                          <td>可借数量：
-                            <input name="number" type="text" id="number" value="" size="17">
-                            册
-                            &nbsp;</td>
-                        </tr>
-                    </table></td>
-                  </tr>
-				 </form>
-              </table></td>
-          </tr>
-          <tr>
-            <td valign="top"><table width="100%" height="35" border="1" cellpadding="0" cellspacing="0" bordercolor="#FFFFFF" bordercolorlight="#FFFFFF" bordercolordark="#F6B83B" bgcolor="#FFFFFF">
-                <tr align="center" bgcolor="#e3F4F7">
-                  <td width="24%" height="25" bgcolor="#FFF9D9">图书名称</td>
-                  <td width="12%" bgcolor="#FFF9D9">借阅时间</td>
-                  <td width="13%" bgcolor="#FFF9D9">应还时间</td>
-                    <td width="13%" bgcolor="#FFF9D9">超期天数</td>
-                  <td width="12%" bgcolor="#FFF9D9"><input name="Button22" type="button" class="btn_grey" value="完成续借" onClick="window.location.href='bookRenew.jsp'"></td>
-                </tr>
-<%}else{
-	ReaderInfo readerinfo =(ReaderInfo)allReaderinfo.get(0);
- %>
+					ArrayList allReaderinfo=(ArrayList)session.getAttribute("allReaderinfo");
 
+				ReaderInfo readerinfo =(ReaderInfo)allReaderinfo.get(0);
+ %>
+		<input name="barcode" type="hidden" id="barcode" value="<%=readerinfo.getReaderid() %>" size="24">
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
-				<form name="form1" method="post" action="BorrowRenewServlet">
-				
-                  <tr>
-                    <td><table width="90%" height="21" border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td width="24%" height="18" style="padding-left:7px;padding-top:7px;"><img src="Images/reader_checkbg.jpg" width="142" height="18"></td>
-                          <td width="76%" style="padding-top:7px;">读者编号：
-                            <input name="barcode" type="text" id="barcode" value="<%=readerinfo.getReaderid() %>" size="24">
-                            &nbsp;
-                            <input name="Button" type="button" class="btn_grey" value="确定" onClick="checkreader(form1)"></td>
-                        </tr>
-                    </table></td>
-                  </tr>
-                  <tr>
-                    <td height="13" align="left" style="padding-left:7px;"><hr width="90%" size="1"></td>
-                    </tr>
-                  <tr>
-                    <td align="center"><table width="96%" border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td height="27">姓&nbsp;&nbsp;&nbsp;&nbsp;名：
-                            <input name="readername" type="text" id="readername" value="<%=readerinfo.getReadername()%>"></td>
-                          
-                          <td>读者类型：
-                            <input name="readerType" type="text" id="readerType" value="<%=readerinfo.getRtypename()%>"></td>
-                        </tr>
-                        <tr>
-        
-                          <td>证件号码：
-                            <input name="paperNo" type="text" id="paperNo" value="<%=readerinfo.getIdcard()%>"></td>
-                          <td>可借数量：
-                            <input name="number" type="text" id="number" value="<%=readerinfo.getNumber()%>" size="17">
-                            册
-                            &nbsp;</td>
-                        </tr>
-                    </table></td>
-                  </tr>
-				 </form>
-              </table></td>
-          </tr>
+	          </tr>
           <tr>
             <td valign="top"><table width="100%" height="35" border="1" cellpadding="0" cellspacing="0" bordercolor="#FFFFFF" bordercolorlight="#FFFFFF" bordercolordark="#F6B83B" bgcolor="#FFFFFF">
                 <tr align="center" bgcolor="#e3F4F7">
@@ -152,21 +61,19 @@
                                 	BorrowInfo borrow=(BorrowInfo)allBorrowBook.get(i);
                 %>
                 <tr>
+                <input type="hidden"  name="borrowid" value="<%=borrow.getId()%>">
                   <td height="25" style="padding:5px;">&nbsp;<%=borrow.getBookname()%></td>
                   <td style="padding:5px;">&nbsp;<%=borrow.getBorrowdate() %></td>  
                   <td style="padding:5px;">&nbsp;<%=borrow.getOrderdate() %></td>
-                  <% if(borrow.getOverdate()>0){%>
-                  <td style="padding:5px;" >&nbsp;<font color="red">已超期<%=borrow.getOverdate() %>天</font></td>
-                  <%}else{
+                  <%
                   	int overdate=Math.abs(borrow.getOverdate());
                   %>
-                   <td style="padding:5px;" >&nbsp;<%=overdate %>天后超期</td>
-                  <% }%>
-                     <td width="12%" align="center"><a href="BorrowRenewOkServlet?borrowid=<%=borrow.getBookid()%>&barcode=<%=readerinfo.getReaderid()  %>">续借</a>&nbsp;</td>
+                   <td style="padding:5px;" >&nbsp;<font color="blue"><%=overdate %>天后超期</font></td>
+                  
+                     <td width="12%" align="center"><a href="ReaderRenewOkServlet?bookid=<%=borrow.getBookid()%>&barcode=<%=readerinfo.getReaderid()  %>&borrowid=<%=borrow.getId() %>">续借</a>&nbsp;</td>
                    </tr>
-               <%
-}}
-%>
+             <% }%>
+
             </table>
 			</td>
           </tr>
